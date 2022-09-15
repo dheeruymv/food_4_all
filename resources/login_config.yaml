@@ -1,0 +1,17 @@
+credentials:
+  usernames:
+    jsmith:
+      email: dheeraj.kumar@morganstanley.com
+      name: Dheeraj
+      password: '$2b$12$9WXDteXz19V4QnwYeqyEru8/6SIgQ5/qiplwdimw1ePmAxhOG70wq' # To be replaced with hashed password
+    rbriggs:
+      email: dheeraj1.kumar1@morganstanley.com
+      name: Dk
+      password: '$2b$12$htdvqwnISpsGpVCBQKXZpOxHRKxTMPubs9GNUiRAl89VSJGJsujxq' # To be replaced with hashed password
+cookie:
+  expiry_days: 30
+  key: some_signature_key
+  name: some_cookie_name
+preauthorized:
+  emails:
+  - melsby@gmail.com
