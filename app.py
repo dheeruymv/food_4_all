@@ -3,13 +3,8 @@ Created on 05-Sep-2022
 
 @author: dheer
 '''
-import sys
 import logging
 import streamlit as st
-from contextlib import contextmanager, redirect_stdout
-#from streamlit.report_thread import REPORT_CONTEXT_ATTR_NAME
-from threading import current_thread
-from io import StringIO
 from PIL import Image
 
 from login.landing_page import Login
@@ -22,7 +17,7 @@ APP_NAME = "Food 4 All"
 def _display_logo():
     rs_path = GeneralUtils().get_resource_path()
     logo_img = Image.open(str(rs_path)+"//food_4_all_logo.png")
-    st.image(logo_img, caption=APP_NAME)
+    st.image(logo_img, caption="")
     
 
 def main():
