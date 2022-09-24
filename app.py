@@ -3,23 +3,42 @@ Created on 05-Sep-2022
 
 @author: dheer
 '''
+import sys
+import logging
 import streamlit as st
-import numpy as np
-import pandas as pd
+from contextlib import contextmanager, redirect_stdout
+#from streamlit.report_thread import REPORT_CONTEXT_ATTR_NAME
+from threading import current_thread
+from io import StringIO
+from PIL import Image
 
 from login.landing_page import Login
+from utils.generalutils import GeneralUtils
 
 APP_NAME = "Food 4 All"
 
+
+
+def _display_logo():
+    rs_path = GeneralUtils().get_resource_path()
+    logo_img = Image.open(str(rs_path)+"//food_4_all_logo.png")
+    st.image(logo_img, caption=APP_NAME)
+    
+
 def main():
-    APP_NAME ## Displays application name
+    #APP_NAME ## Displays application name
+    _display_logo()
     auth_obj = Login().display_login_module()
     name, authentication_status, username = auth_obj.login('Login', 'main')
-    # dataframe = pd.DataFrame(
-    # np.random.randn(10, 20),
-    # columns=('col %d' % i for i in range(20)))
-    # st.table(dataframe)
-
+    logging.info("Name is : {}, authentication_status is : {} and username is {}".format(name, authentication_status, username))
+    if st.session_state["authentication_status"]:
+        auth_obj.logout('Logout', 'main')
+        st.write(f'Welcome *{st.session_state["name"]}*')
+        st.title('Some content')
+    elif st.session_state["authentication_status"] == False:
+        st.error('Username/password is incorrect')
+    elif st.session_state["authentication_status"] == None:
+        st.warning('Please enter your username and password')
 
 
 if __name__ == '__main__':
