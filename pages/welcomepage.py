@@ -23,7 +23,9 @@ class WelcomePage:
                 label_visibility=st.session_state.visibility,
                 disabled=st.session_state.disabled,)
         food = self._display_and_get_food_based_on_diet(diet_option)
-        self._display_receipe(food)
+        receipe_rest = st.button("Get Receipe!!")
+        if receipe_rest:
+            self._display_receipe(food)
         
     def _display_and_get_food_based_on_diet(self, diet_option):
             if "Vegan" in diet_option:
