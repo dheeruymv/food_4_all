@@ -11,8 +11,15 @@ class Register:
         self._auth_obj = authenticator
     
     def display_register_module(self):
+        #try:
+            #print("Result is : {}".format(self._auth_obj.register_user('Register user', preauthorization=False)))
+            #if self._auth_obj.register_user('Register user', preauthorization=False):
         try:
-            if self._auth_obj.register_user('Register user', preauthorization=False):
-                st.success('User registered successfully')
+            self._auth_obj.register_user('Register user', preauthorization=False)
+            print("Session state has : {}".format(st.session_state))
+            print("Credentials has : {}".format(self._auth_obj.credentials))
+            return True
+        #st.success('User registered successfully')
         except Exception as e:
             st.error(e)
+            return False
