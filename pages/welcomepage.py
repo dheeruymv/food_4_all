@@ -33,22 +33,16 @@ class WelcomePage:
                     "Choose your food",
                     ["phyllo dough","walnuts","cinnanmon","water","honey","melted chocolate","unsalted butter",
                      "legumes","brocolli","Tofu","hemp seeds","flax seeds","chia seeds"])
-                    # label_visibility=st.session_state.visibility,
-                    # disabled=st.session_state.disabled,)
             if diet_option == "Vegetarian":
                 choice_of_food = st.multiselect(
                     "Choose your food",
                     ["white rice","brown rice","tomatoes","black beans","garlic","peppers","corn",
                      "milk","plantain","lemon","avocado","bell pepper","celery", "egg plant"])
-                    # label_visibility=st.session_state.visibility,
-                    # disabled=st.session_state.disabled,)
             if "Non-Veg" in diet_option:
                 choice_of_food = st.multiselect(
                     "Choose your food",
                     ["Chicken","tomatoes","spring onion","lamb","pork","fish","prawns",
                      "rice","beef","eggs","calamari","bell pepper","celery", "onions"])
-                    # label_visibility=st.session_state.visibility,
-                    # disabled=st.session_state.disabled,)
             return choice_of_food
         
     def _display_receipe(self, food):
@@ -59,6 +53,31 @@ class WelcomePage:
                         }
                 </style>
             """, unsafe_allow_html=True)
-        if food:
-            st.markdown("**Generated receipe with food selected: {}**".format("Baklava"))
+        if food:  ### Integrate with Anju's receipe preparation python script
+            st.markdown("**Generated receipe with food selected: {}** :smile:".format("Baklava"))
+            #st.write("Do you want to order food!?")
+            order_food = st.radio("Do you want to order food!?",('Yes','No'))
+            #order_food_no = st.checkbox('No')
+            #st.write(order_food_yes)
+            #st.write(order_food_no)
+            if order_food == "Yes":
+                self._order_food_based_on_user_selection(order_food)
+            elif order_food == "No":
+                self._order_food_based_on_user_selection(order_food)
+            
+    def _order_food_based_on_user_selection(self, order_food):
+        if order_food == "Yes":
+            zip_code = st.number_input("Zip Code", max_value=99999)
+            address = st.text_area("Address")
+            order_placed = st.button("Order food!")
+            if order_placed:
+                st.write("List of restaurants to be displayed")
+        elif order_food == "No":
+            st.write("Get receipe to your mailbox!")
+            email = st.text_input("Email")
+            if email:
+                send_email = st.button("Get mail")
+                if send_email:
+                    st.write("Email sent successfully! Enjoy your cooking & food! :smile:")
+            
                 
