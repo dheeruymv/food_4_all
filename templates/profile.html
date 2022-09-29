@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Clean Blog - Food For All Team Theme</title>
+        <link rel="icon" type="image/x-icon" href="../static/assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="../static/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="/">Food For All</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/recommands">Recommands</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/fav_receipies">My Favorites</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/profile">Profile</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('../static/assets/img/search_receipies.jpg')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="site-heading">
+                            <h1>Hello April</h1>
+                            <span class="subheading">Welcome to our Food for All services!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Edit profile-->
+        <div class="container rounded bg-white mt-5 mb-5">
+            <div class="row">
+                <div class="col-md-3 border-right">
+                    <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" width="150px" src="../static/assets/img/profile.png"><span class="font-weight-bold">April</span><span class="text-black-50">april@gmail.com</span><span> </span></div>
+                </div>
+                <div class="col-md-5 border-right">
+                    <div class="p-3 py-5">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="text-right">Profile Settings</h4>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6"><label class="labels">First Name</label><input type="text" class="form-control" placeholder="first name" value=""></div>
+                            <div class="col-md-6"><label class="labels">Last name</label><input type="text" class="form-control" value="" placeholder="last name"></div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12"><label class="labels">Address Line 1</label><input type="text" class="form-control" placeholder="enter address line 1" value=""></div>
+                            <div class="col-md-12"><label class="labels">Address Line 2</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>
+                            <div class="col-md-12"><label class="labels">Zip Code( in US )</label><input type="text" class="form-control" placeholder="enter Zip Code" value=""></div>
+                            <div class="col-md-12"><label class="labels">Phone Number</label><input type="text" class="form-control" placeholder="enter phone number" value=""></div>
+                            <div class="col-md-12"><label class="labels">Email address</label><input type="text" class="form-control" placeholder="enter email address" value=""></div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6"><label class="labels">Country</label><input type="text" class="form-control" placeholder="country" value=""></div>
+                            <div class="col-md-6"><label class="labels">State/Region</label><input type="text" class="form-control" value="" placeholder="state"></div>
+                        </div>
+                        <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="button">Save Profile</button></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 py-5">
+                        <div class="d-flex justify-content-between align-items-center experience"><span>Edit Dietary Restrictions</span></div><br>
+                        <div class="col-md-12"><label class="labels">Do you have any dietary restrictions? </label><input type="text" class="form-control" placeholder="enter restrictions" value=""></div> <br>
+                        <div class="col-md-12"><label class="labels">Choose your restrictions (Multi Select) </label><input type="text" class="form-control" placeholder="enter more additional details here" value=""></div>
+                        <button class=" col-md-12 collapsible btn text-uppercase">Ingredients Restrictions</button>
+                        <div class="col-md-12 container px-2 px-lg-5" class="content">
+                            <div class="col-md-12 form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="lowCalorie">
+                              <label class="form-check-label" for="lowCalorie">low-calorie</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="lowCarb">
+                              <label class="form-check-label" for="lowCarb">low-carb</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="lowCholesterol">
+                              <label class="form-check-label" for="lowCholesterol">low-cholesterol</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="lowFat">
+                                 <label class="form-check-label" for="lowFat">low-fat</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="lowProtein">
+                              <label class="form-check-label" for="lowProtein">low-protein</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="lowSaturatedFat">
+                              <label class="form-check-label" for="lowSaturatedFat">low-saturated-fat</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="lowSodium">
+                              <label class="form-check-label" for="lowSodium">low-sodium</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="lowSugar">
+                              <label class="form-check-label" for="lowSugar">low-sugar</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="fatFree">
+                              <label class="form-check-label" for="fatFree">fat-free</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="glutenFreeAppetizers">
+                              <label class="form-check-label" for="glutenFreeAppetizers">gluten-free</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="diabetic">
+                              <label class="form-check-label" for="diabetic">diabetic</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="grainFree">
+                              <label class="form-check-label" for="grainFree">grain-free</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="noFlour">
+                              <label class="form-check-label" for="noFlour">no flour</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="noMeat">
+                              <label class="form-check-label" for="noMeat">no meat</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="noShellFish">
+                              <label class="form-check-label" for="noShellFish">no-shell-fish</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="nonAlcoholic">
+                              <label class="form-check-label" for="nonAlcoholic">non-alcoholic</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="sugarFree">
+                              <label class="form-check-label" for="sugarFree">sugar-free</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="sodiumFree">
+                              <label class="form-check-label" for="sodiumFree">sodium-free</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="toddlerFriendly">
+                              <label class="form-check-label" for="toddlerFriendly">toddler-friendly</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="eggFree">
+                              <label class="form-check-label" for="eggFree">egg-free</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="kidFriendly">
+                              <label class="form-check-label" for="kidFriendly">kid-friendly</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+
+    <!-- Footer-->
+
+        <div class="small text-center text-muted fst-italic">Copyright &copy; Food For All Team</div>
+        <br>
+    </body>
+</html>
