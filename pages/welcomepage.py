@@ -27,29 +27,36 @@ class WelcomePage:
         
     def _display_and_get_food_based_on_diet(self, diet_option):
             if "Vegan" in diet_option:
-                choice_of_food = st.selectbox(
+                choice_of_food = st.multiselect(
                     "Choose your food",
-                    ("phyllo dough","walnuts","cinnanmon","water","honey","melted chocolate","unsalted butter",
-                     "legumes","brocolli","Tofu","hemp seeds","flax seeds","chia seeds"),
-                    label_visibility=st.session_state.visibility,
-                    disabled=st.session_state.disabled,)
+                    ["phyllo dough","walnuts","cinnanmon","water","honey","melted chocolate","unsalted butter",
+                     "legumes","brocolli","Tofu","hemp seeds","flax seeds","chia seeds"])
+                    # label_visibility=st.session_state.visibility,
+                    # disabled=st.session_state.disabled,)
             if diet_option == "Vegetarian":
-                choice_of_food = st.selectbox(
+                choice_of_food = st.multiselect(
                     "Choose your food",
-                    ("white rice","brown rice","tomatoes","black beans","garlic","peppers","corn",
-                     "milk","plantain","lemon","avocado","bell pepper","celery", "egg plant"),
-                    label_visibility=st.session_state.visibility,
-                    disabled=st.session_state.disabled,)
+                    ["white rice","brown rice","tomatoes","black beans","garlic","peppers","corn",
+                     "milk","plantain","lemon","avocado","bell pepper","celery", "egg plant"])
+                    # label_visibility=st.session_state.visibility,
+                    # disabled=st.session_state.disabled,)
             if "Non-Veg" in diet_option:
-                choice_of_food = st.selectbox(
+                choice_of_food = st.multiselect(
                     "Choose your food",
-                    ("Chicken","tomatoes","spring onion","lamb","pork","fish","prawns",
-                     "rice","beef","eggs","calamari","bell pepper","celery", "onions"),
-                    label_visibility=st.session_state.visibility,
-                    disabled=st.session_state.disabled,)
+                    ["Chicken","tomatoes","spring onion","lamb","pork","fish","prawns",
+                     "rice","beef","eggs","calamari","bell pepper","celery", "onions"])
+                    # label_visibility=st.session_state.visibility,
+                    # disabled=st.session_state.disabled,)
             return choice_of_food
         
     def _display_receipe(self, food):
+        st.markdown("""
+                <style>
+                .big-font {
+                font-size:100px !important;
+                        }
+                </style>
+            """, unsafe_allow_html=True)
         if food:
-            st.write("Generated receipe with food selected: {}".format("Baklava"))
+            st.markdown("**Generated receipe with food selected: {}**".format("Baklava"))
                 
