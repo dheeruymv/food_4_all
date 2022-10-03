@@ -1,68 +1,91 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, login_required, logout_user
-
-from .app import db
-from .models import User
-
-auth = Blueprint('auth', __name__)
+"""Routes for user authentication."""
+from flask import Blueprint, redirect, render_template, flash, request, session, url_for
+from flask_login import login_required, logout_user, current_user, login_user
+from .forms import LoginForm, SignupForm
+from .models import db, User
+from . import login_manager
 
 
-@auth.route('/login')
+# Blueprint Configuration
+auth_bp = Blueprint(
+    'auth_bp', __name__,
+    template_folder='templates',
+    static_folder='static'
+)
+
+
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    """
+    Log-in page for registered users.
+
+    GET requests serve Log-in page.
+    POST requests validate and redirect user to dashboard.
+    """
+    # Bypass if user is logged in
+    if current_user.is_authenticated:
+        return redirect(url_for('main_bp.profile'))
+
+    form = LoginForm()
+    # Validate login attempt
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and user.check_password(password=form.password.data):
+            login_user(user)
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('main_bp.profile'))
+        flash('Invalid username/password combination')
+        return redirect(url_for('auth_bp.login'))
+    return render_template(
+        'login.jinja2',
+        form=form,
+        title='Log in.',
+        template='login-page',
+        body="Log in with your User account."
+    )
 
 
-@auth.route('/login', methods=['POST'])
-def login_post():
-    email = request.form.get('signin-email')
-    password = request.form.get('signin-password')
-
-    user = User.query.filter_by(email=email).first() # if this returns a user, then the email already exists in database
-    if not user or not check_password_hash(user.password, password):
-        flash('Please check your login details and try again.')
-        return redirect(url_for('auth.login'))
-    # if the above check passes, then we know the user has the right credentials
-    # login_user(user, remember=remember)
-    return redirect(url_for('main.profile'))
-
-
-@auth.route('/signup', methods=['POST', 'GET'])
+@auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if request.method == 'GET':
-        return render_template('login.html')
-    else: # if the request is POST, then we check if the email
-          # doesn't already exist and then we save data
-        # code to validate and add user to database goes here
-        email = request.form.get('signup-email')
-        name = request.form.get('signup-username')
-        password = request.form.get('signup-password')
+    """
+    User sign-up page.
 
-        user = User.query.filter_by(email=email).first() # if this returns a user, then the email already exists in database
-
-        if user: # if a user is found, we want to redirect back to login page so user can try again
-            flash('Email address already exists')
-            # return redirect(url_for('auth.login'))
-            return redirect(url_for('main.recommands'))
-
-        # create a new user with the form data. Hash the password so the plaintext version isn't saved.
-        new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'))
-
-        # add the new user to the database
-        db.session.add(new_user)
-        db.session.commit()
-        # return redirect(url_for('auth.login_post'))
-        return redirect(url_for('auth.users'))
-
-
-@auth.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('auth.login'))
+    GET requests serve sign-up page.
+    POST requests validate form & user creation.
+    """
+    form = SignupForm()
+    if form.validate_on_submit():
+        existing_user = User.query.filter_by(email=form.email.data).first()
+        if existing_user is None:
+            user = User(
+                name=form.name.data,
+                email=form.email.data,
+            )
+            user.set_password(form.password.data)
+            db.session.add(user)
+            db.session.commit()  # Create new user
+            login_user(user)  # Log in as newly created user
+            return redirect(url_for('main_bp.profile'))
+        flash('A user already exists with that email address.')
+    return render_template(
+        'signup.jinja2',
+        title='Create an Account.',
+        form=form,
+        template='signup-page',
+        body="Sign up for a user account."
+    )
 
 
-@auth.route('/users')
-def list():
-    users = db.session.execute(db.select(User).order_by(User.name)).scalars()
-    return render_template("db_records.html", users=users)
+@login_manager.user_loader
+def load_user(user_id):
+    """Check if user is logged-in on every page load."""
+    if user_id is not None:
+        return User.query.get(user_id)
+    return None
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    """Redirect unauthorized users to Login page."""
+    flash('You must be logged in to view that page.')
+    return redirect(url_for('auth_bp.login'))
