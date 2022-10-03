@@ -13,7 +13,6 @@ from utils.generalutils import GeneralUtils
 APP_NAME = "Food 4 All"
 
 
-
 def _display_logo():
     rs_path = GeneralUtils().get_resource_path()
     logo_img = Image.open(str(rs_path)+"//food_4_all_logo.png")
