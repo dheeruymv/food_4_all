@@ -1,5 +1,5 @@
 # byte-compiled / optimized / DLL files
-__pycache__/
+#__pycache__/
 *.py[cod]
 
 # tests and coverage
@@ -14,6 +14,7 @@ __pycache__/
 # venv
 env
 venv
+#.idea
 
 # other
 .DS_Store
