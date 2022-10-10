@@ -1,189 +1,180 @@
 """
 """
 
+import json
 from functools import wraps
 from datetime import datetime, timezone, timedelta
 
 import jwt
-from flask import request
+import flask
 from flask_restx import Api, Resource, fields
+from flask import request, Blueprint, render_template, redirect, url_for
+from flask_login import current_user, login_user, logout_user
+
+from src import db, login_manager
+from src.user_management import blueprint
+from src.user_management.forms import LoginForm, RegistrationForm
+from src.user_management.models import Users
+from src.user_management.utils import verify_pass
 
 
-from food_for_all.config import BaseConfig
-from food_for_all.models import db
-from .models import Users, JWTTokenBlocklist
+api = Api(blueprint)
 
 
-um_api = Api(version="1.0", title="Food for All API",
-             default="User Management",
-             default_label="APIs for user management")
+@blueprint.route('/')
+def route_default():
+    return redirect(url_for('user_management_blueprint.login'))
 
 
-signup_model = um_api.model('SignUpModel', {"username": fields.String(required=True, min_length=2, max_length=32),
-                                            "email": fields.String(required=True, min_length=4, max_length=64),
-                                            "password": fields.String(required=True, min_length=4, max_length=16)
-                                            })
+@blueprint.route('/login', methods=['GET', 'POST'])
+def login():
+    login_form = LoginForm(request.form)
 
-login_model = um_api.model('LoginModel', {"email": fields.String(required=True, min_length=4, max_length=64),
-                                          "password": fields.String(required=True, min_length=4, max_length=16)
-                                          })
+    if flask.request.method == 'POST':
+        # read form data
+        username = request.form['username']
+        password = request.form['password']
 
-user_edit_model = um_api.model('UserEditModel', {"userID": fields.String(required=True, min_length=1, max_length=32),
-                                                 "username": fields.String(required=True, min_length=2, max_length=32),
-                                                 "email": fields.String(required=True, min_length=4, max_length=64)
-                                                 })
+        user = Users.query.filter_by(username=username).first()
+
+        # Check the password
+        if user and verify_pass(password, user.password):
+            login_user(user)
+            return redirect(url_for('user_management_blueprint.route_default'))
+
+        # Something (user or pass) is not ok
+        return render_template('accounts/login.html',
+                               msg='Wrong user or password',
+                               form=login_form)
+
+    if current_user.is_authenticated:
+        return redirect(url_for('food_for_all_blueprint.index'))
+    else:
+        return render_template('accounts/login.html',
+                               form=login_form)
 
 
-def token_required(f):
-    @wraps(f)
-    def decorator(*args, **kwargs):
+@blueprint.route('/register', methods=['GET', 'POST'])
+def register():
+    registration_form = RegistrationForm(request.form)
+    if 'register' in request.form:
 
-        token = None
+        username = request.form['username']
+        email = request.form['email']
 
-        if "authorization" in request.headers:
-            token = request.headers["authorization"]
+        # Check password matches
+        password = request.form['password']
+        cnf_password = request.form['confirm_password']
+        if password != cnf_password:
+            return render_template('accounts/register.html',
+                                   msg="Password doesn't match",
+                                   success=False,
+                                   form=registration_form)
 
-        if not token:
-            return {"success": False, "msg": "Valid JWT token is missing"}, 400
+        # Check usename exists
+        user = Users.query.filter_by(username=username).first()
+        if user:
+            return render_template('accounts/register.html',
+                                   msg='Username already registered',
+                                   success=False,
+                                   form=registration_form)
 
+        # Check email exists
+        user = Users.query.filter_by(email=email).first()
+        if user:
+            return render_template('accounts/register.html',
+                                   msg='Email already registered',
+                                   success=False,
+                                   form=registration_form)
+
+        # else we can create the user
+        user = Users(**request.form)
+        db.session.add(user)
+        db.session.commit()
+
+        # Delete user from session
+        logout_user()
+
+        return render_template('accounts/register.html',
+                               msg='User created successfully.',
+                               success=True,
+                               form=registration_form)
+
+    else:
+        return render_template('accounts/register.html', form=registration_form)
+
+
+@api.route('/login/jwt/', methods=['POST'])
+class JWTLogin(Resource):
+    def post(self):
         try:
-            data = jwt.decode(token, BaseConfig.SECRET_KEY, algorithms=["HS256"])
-            current_user = Users.get_by_email(data["email"])
+            data = request.form
 
-            if not current_user:
-                return {"success": False,
-                        "msg": "Sorry. Wrong authentication token. This user does not exist."}, 400
+            if not data:
+                data = request.json
 
-            token_expired = db.session.query(JWTTokenBlocklist.id).filter_by(jwt_token=token).scalar()
+            if not data:
+                return {
+                           'message': 'username or password is missing',
+                           "data": None,
+                           'success': False
+                       }, 400
+            # validate input
+            user = Users.query.filter_by(username=data.get('username')).first()
+            if user and verify_pass(data.get('password'), user.password):
+                try:
 
-            if token_expired is not None:
-                return {"success": False, "msg": "Token revoked."}, 400
+                    # Empty or null Token
+                    if not user.api_token or user.api_token == '':
+                        user.api_token = generate_token(user.id)
+                        user.api_token_ts = int(datetime.utcnow().timestamp())
+                        db.session.commit()
 
-            if not current_user.check_jwt_auth_active():
-                return {"success": False, "msg": "Token expired."}, 400
-        except:
-            return {"success": False, "msg": "Token is invalid"}, 400
+                    # token should expire after 24 hrs
+                    return {
+                        "message": "Successfully fetched auth token",
+                        "success": True,
+                        "data": user.api_token
+                    }
+                except Exception as e:
+                    return {
+                               "error": "Something went wrong",
+                               "success": False,
+                               "message": str(e)
+                           }, 500
+            return {
+                       'message': 'username or password is wrong',
+                       'success': False
+                   }, 403
+        except Exception as e:
+            return {
+                       "error": "Something went wrong",
+                       "success": False,
+                       "message": str(e)
+                   }, 500
 
-        return f(current_user, *args, **kwargs)
-
-    return decorator
-
-
-@um_api.route('/api/users/register')
-class Register(Resource):
-    """
-       Creates a new user by taking 'signup_model' input
-    """
-
-    @um_api.expect(signup_model, validate=True)
-    def post(self):
-
-        req_data = request.get_json()
-
-        _username = req_data.get("username")
-        _email = req_data.get("email")
-        _password = req_data.get("password")
-
-        user_exists = Users.get_by_email(_email)
-        if user_exists:
-            return {"success": False,
-                    "msg": "Email already taken"}, 400
-
-        user_exists = Users.get_by_username(_username)
-        if user_exists:
-            return {"success": False,
-                    "msg": "Username already taken"}, 400
-
-        new_user = Users(username=_username, email=_email)
-
-        new_user.set_password(_password)
-        new_user.save()
-
-        return {"success": True,
-                "userID": new_user.id,
-                "msg": "The user was successfully registered"}, 200
+@blueprint.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('user_management_blueprint.login'))
 
 
-@um_api.route('/api/users/login')
-class Login(Resource):
-    """
-       Login user by taking 'login_model' input and return JWT token
-    """
-
-    @um_api.expect(login_model, validate=True)
-    def post(self):
-
-        req_data = request.get_json()
-
-        _email = req_data.get("email")
-        _username = req_data.get("username")
-        _password = req_data.get("password")
-
-        if _email is not None:
-            user_exists = Users.get_by_email(_email)
-        if _username is not None:
-            user_exists = Users.get_by_username(_username)
-
-        if not user_exists:
-            return {"success": False,
-                    "msg": "This user does not exist."}, 400
-
-        if not user_exists.check_password(_password):
-            return {"success": False,
-                    "msg": "Wrong credentials."}, 400
-
-        # create access token uwing JWT
-        token = jwt.encode({'email': _email, 'exp': datetime.utcnow() + timedelta(minutes=30)}, BaseConfig.SECRET_KEY)
-
-        user_exists.set_jwt_auth_active(True)
-        user_exists.save()
-
-        return {"success": True,
-                "token": token,
-                "user": user_exists.to_json()}, 200
+# Errors
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+    return render_template('home/page-403.html'), 403
 
 
-@um_api.route('/api/users/edit')
-class EditUser(Resource):
-    """
-       Edits User's username or password or both using 'user_edit_model' input
-    """
-
-    @um_api.expect(user_edit_model)
-    @token_required
-    def post(self, current_user):
-
-        req_data = request.get_json()
-
-        _new_username = req_data.get("username")
-        _new_email = req_data.get("email")
-
-        if _new_username:
-            self.update_username(_new_username)
-
-        if _new_email:
-            self.update_email(_new_email)
-
-        self.save()
-
-        return {"success": True}, 200
+@blueprint.errorhandler(403)
+def access_forbidden(error):
+    return render_template('home/page-403.html'), 403
 
 
-@um_api.route('/api/users/logout')
-class LogoutUser(Resource):
-    """
-       Logs out User using 'logout_model' input
-    """
+@blueprint.errorhandler(404)
+def not_found_error(error):
+    return render_template('home/page-404.html'), 404
 
-    @token_required
-    def post(self, current_user):
 
-        _jwt_token = request.headers["authorization"]
-
-        jwt_block = JWTTokenBlocklist(jwt_token=_jwt_token, created_at=datetime.now(timezone.utc))
-        jwt_block.save()
-
-        self.set_jwt_auth_active(False)
-        self.save()
-
-        return {"success": True}, 200
+@blueprint.errorhandler(500)
+def internal_error(error):
+    return render_template('home/page-500.html'), 500
