@@ -1,5 +1,8 @@
 body {
   background: #fafafa;
+  background-image: url('../static/assets/img/search_receipies.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
   color: #333333;
   margin-top: 5rem;
 }

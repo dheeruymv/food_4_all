@@ -370,61 +370,29 @@
                 <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
-                        <!-- Post preview-->
-                        <div class="post-preview">
-                            <a href="/post">
-                                <h2 class="post-title">Man must explore, and this is exploration at its greatest</h2>
-                                <h3 class="post-subtitle">Problems look mighty small from 150 miles up</h3>
-                            </a>
-                            <p class="post-meta">
-                                Posted by
-                                <a href="#!">Food For All Team</a>
-                                on September 24, 2021
-                            </p>
-                        </div>
-                        <!-- Divider-->
-                        <hr class="my-4" />
-                        <!-- Post preview-->
-                        <div class="post-preview">
-                            <a href="/post"><h2 class="post-title">I believe every human has a finite number of heartbeats. I don't intend to waste any of mine.</h2></a>
-                            <p class="post-meta">
-                                Posted by
-                                <a href="#!">Food For All Team</a>
-                                on September 18, 2021
-                            </p>
-                        </div>
-                        <!-- Divider-->
-                        <hr class="my-4" />
-                        <!-- Post preview-->
-                        <div class="post-preview">
-                            <a href="/post">
-                                <h2 class="post-title">Science has not yet mastered prophecy</h2>
-                                <h3 class="post-subtitle">We predict too much for the next year and yet far too little for the next ten.</h3>
-                            </a>
-                            <p class="post-meta">
-                                Posted by
-                                <a href="#!">Food For All Team</a>
-                                on August 24, 2021
-                            </p>
-                        </div>
-                        <!-- Divider-->
-                        <hr class="my-4" />
-                        <!-- Post preview-->
-                        <div class="post-preview">
-                            <a href="/post">
-                                <h2 class="post-title">Failure is not an option</h2>
-                                <h3 class="post-subtitle">Many say exploration is part of our destiny, but it’s actually our duty to future generations.</h3>
-                            </a>
-                            <p class="post-meta">
-                                Posted by
-                                <a href="#!">Food For All Team</a>
-                                on July 8, 2021
-                            </p>
-                        </div>
-                        <!-- Divider-->
-                        <hr class="my-4" />
-                        <!-- Pager-->
-                        <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">More Recipes →</a></div>
+                        {% for post in posts.items %}
+                            <article class="media content-section">
+                              <div class="media-body">
+                                <div class="article-metadata">
+                                  <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                                  <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                                </div>
+                                <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+                                <p class="article-content">{{ post.content }}</p>
+                              </div>
+                            </article>
+                        {% endfor %}
+                        {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                          {% if page_num %}
+                            {% if posts.page == page_num %}
+                              <a class="btn btn-info mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+                            {% else %}
+                              <a class="btn btn-outline-info mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+                            {% endif %}
+                          {% else %}
+                            ...
+                          {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
             </div>

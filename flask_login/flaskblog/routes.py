@@ -11,8 +11,11 @@ from flask_mail import Message
 
 
 @app.route("/home")
-def index():
-    return render_template('index.html')
+def home():
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
+    return render_template('home.html', posts=posts)
+
 
 @app.route('/recommands')
 def recommands():
@@ -22,18 +25,49 @@ def recommands():
 # def post():
 #     return render_template('post.html')
 
+
 @app.route('/fav_receipies')
 def fav_receipies():
     return render_template('fav_receipies.html')
 
-@app.route('/profile')
+
+@app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    return render_template('profile.html', name=current_user.username)
+    # return render_template('profile.html', name=current_user.username, email=current_user.email)
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_picture(form.picture.data)
+            current_user.image_file = picture_file
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        current_user.phone_num = form.phone_num.data
+        current_user.address_l1 = form.address_l1.data
+        current_user.address_l2 = form.address_l2.data
+        current_user.zip_code = form.zip_code.data
+        current_user.country = form.country.data
+        current_user.region = form.region.data
+        current_user.dietary_restrictions = form.dietary_restrictions.data
+        current_user.ingredients_restrictions = form.ingredients_restrictions.data
+        db.session.commit()
+        flash('Your account has been updated!', 'success')
+        return redirect(url_for('profile'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+        form.phone_num.data = current_user.phone_num
+        form.address_l1.data = current_user.address_l1
+        form.address_l2.data = current_user.address_l2
+        form.zip_code.data = current_user.zip_code
+        form.country.data = current_user.country
+        form.region.data = current_user.region
+        form.dietary_restrictions.data = current_user.dietary_restrictions
+        form.ingredients_restrictions.data = current_user.ingredients_restrictions
+    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
+    return render_template('profile.html', image_file=image_file, form=form)
 
-
-# @app.route("/")
-# @app.route("/home")
+# @app.route("/home_old")
 # def home():
 #     page = request.args.get('page', 1, type=int)
 #     posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)

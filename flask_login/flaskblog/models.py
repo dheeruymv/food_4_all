@@ -15,6 +15,14 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
+    phone_num = db.Column(db.INT())
+    address_l1 = db.Column(db.String(240))
+    address_l2 = db.Column(db.String(240))
+    zip_code = db.Column(db.String(6))
+    country = db.Column(db.String(60))
+    region = db.Column(db.String(60))
+    dietary_restrictions = db.Column(db.String())
+    ingredients_restrictions = db.Column(db.String())
     posts = db.relationship('Post', backref='author', lazy=True)
 
     def get_reset_token(self, expires_sec=1800):
@@ -36,9 +44,20 @@ class User(db.Model, UserMixin):
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    content = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    ingredients = db.Column(db.Text, nullable=False)
+    serving_size = db.Column(db.Text, nullable=False)
+    servings = db.Column(db.Text, nullable=False)
+    ingredients_raw_str = db.Column(db.Text, nullable=False)
+    steps = db.Column(db.Text, nullable=False)
+    key_words = db.Column(db.Text, nullable=False)
+    meals = db.Column(db.Text, nullable=False)
+    prepare_time = db.Column(db.Text, nullable=False)
+    food_types = db.Column(db.Text, nullable=False)
+    user = db.Column(db.Text, nullable=False)
+    ingredients_choice = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):

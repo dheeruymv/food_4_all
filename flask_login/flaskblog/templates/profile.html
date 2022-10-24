@@ -41,7 +41,7 @@
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="site-heading">
-                            <h1>Hello {{ name }}</h1>
+                            <h1>Hello {{ current_user.username }}</h1>
                             <span class="subheading">Welcome to our Food for All services!</span>
                         </div>
                     </div>
@@ -50,39 +50,164 @@
         </header>
 
         <!-- Page Edit profile-->
-        <div class="container rounded bg-white mt-5 mb-5">
-            <div class="row">
-                <div class="col-md-3 border-right">
-                    <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" width="150px" src="../static/assets/img/profile.png"><span class="font-weight-bold">{{ name }}</span><span class="text-black-50">april@gmail.com</span><span> </span></div>
-                </div>
-                <div class="col-md-5 border-right">
-                    <div class="p-3 py-5">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="text-right">Profile Settings</h4>
+        <form method="POST" action="" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <div class="container rounded bg-white mt-5 mb-5">
+                    <div class="row">
+                        <div class="col-md-3 border-right">
+                            <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" width="150px" src="{{ image_file }}"><span class="font-weight-bold">{{ current_user.username }}</span><span class="text-black-50">{{ current_user.email }}</span><span> </span></div>
                         </div>
-                        <div class="row mt-2">
-                            <div class="col-md-6"><label class="labels">First Name</label><input type="text" class="form-control" placeholder="first name" value=""></div>
-                            <div class="col-md-6"><label class="labels">Last name</label><input type="text" class="form-control" value="" placeholder="last name"></div>
+                        <div class="col-md-5 border-right">
+                            <div class="p-3 py-5">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 class="text-right">Profile Settings</h4>
+                                </div>
+                                <div class="row mt-6">
+                                        <div class="form-group">
+                                            {{ form.username.label(class="form-control-label") }}
+                                            {% if form.username.errors %}
+                                                {{ form.username(class="form-control form-control-lg is-invalid") }}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.username.errors %}
+                                                        <span>{{ error }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.username(class="form-control form-control-lg") }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group">
+                                            {{ form.email.label(class="form-control-label") }}
+                                            {% if form.email.errors %}
+                                                {{ form.email(class="form-control form-control-lg is-invalid") }}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.email.errors %}
+                                                        <span>{{ error }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.email(class="form-control form-control-lg") }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group">
+                                            {{ form.picture.label() }}
+                                            {{ form.picture(class="form-control-file") }}
+                                            {% if form.picture.errors %}
+                                                {% for error in form.picture.errors %}
+                                                    <span class="text-danger">{{ error }}</span></br>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                </div>
+                                <div class="row mt-6">
+                                    <div class="form-group">
+                                        {{ form.address_l1.label(class="form-control-label") }}
+                                        {% if form.address_l1.errors %}
+                                            {{ form.address_l1(class="form-control form-control-lg is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.address_l1.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.address_l1(class="form-control form-control-lg") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form.address_l2.label(class="form-control-label") }}
+                                        {% if form.address_l2.errors %}
+                                            {{ form.address_l2(class="form-control form-control-lg is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.address_l2.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.address_l2(class="form-control form-control-lg") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form.zip_code.label(class="form-control-label") }}
+                                        {% if form.zip_code.errors %}
+                                            {{ form.zip_code(class="form-control form-control-lg is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.zip_code.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.zip_code(class="form-control form-control-lg") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form.phone_num.label(class="form-control-label") }}
+                                        {% if form.phone_num.errors %}
+                                            {{ form.phone_num(class="form-control form-control-lg is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.phone_num.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.phone_num(class="form-control form-control-lg") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form.country.label(class="form-control-label") }}
+                                        {% if form.country.errors %}
+                                            {{ form.country(class="form-control form-control-lg is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.country.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.country(class="form-control form-control-lg") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form.region.label(class="form-control-label") }}
+                                        {% if form.region.errors %}
+                                            {{ form.region(class="form-control form-control-lg is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.region.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.region(class="form-control form-control-lg") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center experience"><span>Edit Dietary Restrictions</span></div><br>
+                                    <div class="form-group">
+                                        {{ form.dietary_restrictions.label(class="form-control-label") }}
+                                        {% if form.dietary_restrictions.errors %}
+                                            {{ form.dietary_restrictions(class="form-control form-control-lg is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.dietary_restrictions.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.dietary_restrictions(class="form-control form-control-lg") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form.ingredients_restrictions.label(class="form-control-label") }}
+                                        {% if form.ingredients_restrictions.errors %}
+                                            {{ form.ingredients_restrictions(class="form-control form-control-lg is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.ingredients_restrictions.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.ingredients_restrictions(class="form-control form-control-lg") }}
+                                        {% endif %}
+                                    </div>
+                            </div>
                         </div>
-                        <div class="row mt-3">
-                            <div class="col-md-12"><label class="labels">Address Line 1</label><input type="text" class="form-control" placeholder="enter address line 1" value=""></div>
-                            <div class="col-md-12"><label class="labels">Address Line 2</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>
-                            <div class="col-md-12"><label class="labels">Zip Code( in US )</label><input type="text" class="form-control" placeholder="enter Zip Code" value=""></div>
-                            <div class="col-md-12"><label class="labels">Phone Number</label><input type="text" class="form-control" placeholder="enter phone number" value=""></div>
-                            <div class="col-md-12"><label class="labels">Email address</label><input type="text" class="form-control" placeholder="enter email address" value=""></div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md-6"><label class="labels">Country</label><input type="text" class="form-control" placeholder="country" value=""></div>
-                            <div class="col-md-6"><label class="labels">State/Region</label><input type="text" class="form-control" value="" placeholder="state"></div>
-                        </div>
-                        <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="button">Save Profile</button></div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-3 py-5">
-                        <div class="d-flex justify-content-between align-items-center experience"><span>Edit Dietary Restrictions</span></div><br>
-                        <div class="col-md-12"><label class="labels">Do you have any dietary restrictions? </label><input type="text" class="form-control" placeholder="enter restrictions" value=""></div> <br>
-                        <div class="col-md-12"><label class="labels">Choose your restrictions (Multi Select) </label><input type="text" class="form-control" placeholder="enter more additional details here" value=""></div>
                         <button class=" col-md-12 collapsible btn text-uppercase">Ingredients Restrictions</button>
                         <div class="col-md-12 container px-2 px-lg-5" class="content">
                             <div class="col-md-12 form-check">
@@ -170,12 +295,11 @@
                               <label class="form-check-label" for="kidFriendly">kid-friendly</label>
                             </div>
                         </div>
+                        <div class="mt-5 text-center">{{ form.submit(class="btn btn-outline-info") }}</div>
                     </div>
                 </div>
-            </div>
-        </div>
-        </div>
-        </div>
+            </fieldset>
+        </form>
 
     <!-- Footer-->
 

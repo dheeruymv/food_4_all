@@ -36,12 +36,18 @@ class LoginForm(FlaskForm):
 
 
 class UpdateAccountForm(FlaskForm):
-    username = StringField('Username',
-                           validators=[DataRequired(), Length(min=2, max=20)])
-    email = StringField('Email',
-                        validators=[DataRequired(), Email()])
-    picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
-    submit = SubmitField('Update')
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    phone_num = StringField('Phone Number', validators=[Length(min=11, max=11)])
+    address_l1 = StringField('Address line 1')
+    address_l2 = StringField('Address line 2')
+    zip_code = StringField('Zip code', validators=[Length(min=6, max=6)])
+    country = StringField('Country')
+    region = StringField('Region')
+    dietary_restrictions = StringField('Do you have any dietary restrictions?')
+    ingredients_restrictions = StringField('Choose your restrictions (Multi Select)')
+    picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png', 'gif'])])
+    submit = SubmitField('Save Profiles')
 
     def validate_username(self, username):
         if username.data != current_user.username:
