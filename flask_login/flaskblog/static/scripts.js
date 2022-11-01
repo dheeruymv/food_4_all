@@ -27,3 +27,46 @@ window.addEventListener('DOMContentLoaded', () => {
         scrollPos = currentTop;
     });
 })
+
+
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+
+function getIds(filter) {
+  const checkboxes = document.querySelectorAll(`.${filter} input:checked`);
+  const ids = [...checkboxes].map((item) => item.id);
+
+  return ids;
+}
+
+function submit() {
+  const prep = getIds("prep-time");
+  const ingredients = getIds("ingredients");
+  const meals = getIds("meals");
+  const food = getIds("food");
+
+  const params = new URLSearchParams();
+  params.set("prep", prep);
+  params.set("ingredients", ingredients);
+  params.set("meals", meals);
+  params.set("food", food);
+
+  fetch(`/home?${params.toString()}`);
+
+  console.log({ prep, ingredients, meals, food, params: params.toString() });
+}
+
+
+document.getElementById("filter-apply").addEventListener("click", submit);

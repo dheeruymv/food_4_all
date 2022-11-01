@@ -45,20 +45,25 @@ class User(db.Model, UserMixin):
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_posted = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text, nullable=False)
-    ingredients = db.Column(db.Text, nullable=False)
-    serving_size = db.Column(db.Text, nullable=False)
-    servings = db.Column(db.Text, nullable=False)
-    ingredients_raw_str = db.Column(db.Text, nullable=False)
-    steps = db.Column(db.Text, nullable=False)
-    key_words = db.Column(db.Text, nullable=False)
-    meals = db.Column(db.Text, nullable=False)
-    prepare_time = db.Column(db.Text, nullable=False)
-    food_types = db.Column(db.Text, nullable=False)
-    user = db.Column(db.Text, nullable=False)
-    ingredients_choice = db.Column(db.Text, nullable=False)
+    ingredients = db.Column(db.Text)
+    serving_size = db.Column(db.Text)
+    servings = db.Column(db.Text)
+    ingredients_raw_str = db.Column(db.Text)
+    steps = db.Column(db.Text)
+    key_words = db.Column(db.Text)
+    meals = db.Column(db.Text)
+    prepare_time = db.Column(db.Text)
+    food_types = db.Column(db.Text)
+    ingredients_choice = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
+
+
+class Ingredients(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ingredients_raw_str = db.Column(db.Text)
+    zipcode = db.Column(db.String(6), db.ForeignKey('user.zip_code'), nullable=False)

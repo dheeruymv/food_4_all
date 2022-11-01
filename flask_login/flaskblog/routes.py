@@ -8,25 +8,39 @@ from flaskblog.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
 from flaskblog.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
+from sqlalchemy import func
 
 
-@app.route("/home")
+@app.route("/home", methods=['GET', 'POST'])
 def home():
-    page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
-    return render_template('home.html', posts=posts)
+    if request.method == 'POST':
+        page = request.args.get('page', 1, type=int)
+        posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
+        # posts = Post.query.filter_by(description.contains('beef')).all()
+        # posts = Post.query.filter_by(name='Grilled Garlic Cheese Grits').paginate(page=page, per_page=5)
+        # posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
+        # posts = Post.query.filter(Post.description.like('beef')).all()
+        return redirect(url_for('home', posts=posts))
+
+    else:
+        page = request.args.get('page', 1, type=int)
+        prep = request.args.get('prep')
+        ingredients = request.args.get('ingredients')
+        meals = request.args.get('meals')
+        food = request.args.get('food')
+        posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
+        # posts = Post.query.filter_by(name='Grilled Garlic Cheese Grits').paginate(page=page, per_page=5)
+
+        return render_template('home.html', posts=posts)
+
 
 
 @app.route('/recommands')
 def recommands():
     return render_template('recommands.html')
-#
-# @app.route('/post')
-# def post():
-#     return render_template('post.html')
 
 
-@app.route('/fav_receipies')
+@app.route('/fav_receipies', methods=['GET', 'POST'])
 def fav_receipies():
     return render_template('fav_receipies.html')
 
@@ -66,12 +80,6 @@ def profile():
         form.ingredients_restrictions.data = current_user.ingredients_restrictions
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('profile.html', image_file=image_file, form=form)
-
-# @app.route("/home_old")
-# def home():
-#     page = request.args.get('page', 1, type=int)
-#     posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
-#     return render_template('home.html', posts=posts)
 
 
 @app.route("/about")
@@ -131,33 +139,12 @@ def save_picture(form_picture):
     return picture_fn
 
 
-@app.route("/account", methods=['GET', 'POST'])
-@login_required
-def account():
-    form = UpdateAccountForm()
-    if form.validate_on_submit():
-        if form.picture.data:
-            picture_file = save_picture(form.picture.data)
-            current_user.image_file = picture_file
-        current_user.username = form.username.data
-        current_user.email = form.email.data
-        db.session.commit()
-        flash('Your account has been updated!', 'success')
-        return redirect(url_for('account'))
-    elif request.method == 'GET':
-        form.username.data = current_user.username
-        form.email.data = current_user.email
-    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('account.html', title='Account',
-                           image_file=image_file, form=form)
-
-
 @app.route("/post/new", methods=['GET', 'POST'])
 @login_required
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(title=form.title.data, content=form.content.data, author=current_user)
+        post = Post(name=form.name.data, content=form.description.data, author=current_user)
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!', 'success')
@@ -169,7 +156,7 @@ def new_post():
 @app.route("/post/<int:post_id>")
 def post(post_id):
     post = Post.query.get_or_404(post_id)
-    return render_template('post.html', title=post.title, post=post)
+    return render_template('post.html', name=post.name, post=post)
 
 
 @app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
@@ -180,14 +167,18 @@ def update_post(post_id):
         abort(403)
     form = PostForm()
     if form.validate_on_submit():
-        post.title = form.title.data
-        post.content = form.content.data
+        post.name = form.name.data
+        post.description = form.description.data
+        post.ingredients_raw_str = form.ingredients_raw_str.data
+        post.steps = form.steps.data
         db.session.commit()
         flash('Your post has been updated!', 'success')
         return redirect(url_for('post', post_id=post.id))
     elif request.method == 'GET':
-        form.title.data = post.title
-        form.content.data = post.content
+        form.name.data = post.name
+        form.description.data = post.description
+        form.ingredients_raw_str.data = post.ingredients_raw_str
+        form.steps.data = post.steps
     return render_template('create_post.html', title='Update Post',
                            form=form, legend='Update Post')
 

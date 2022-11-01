@@ -63,8 +63,11 @@ class UpdateAccountForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
-    content = TextAreaField('Content', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    date_posted = StringField('Date_posted', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    ingredients_raw_str = TextAreaField('Ingredients')
+    steps = TextAreaField('Steps')
     submit = SubmitField('Post')
 
 
@@ -84,3 +87,16 @@ class ResetPasswordForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
+
+
+class SearchForm(FlaskForm):
+  search = StringField('search', [DataRequired()])
+  submit = SubmitField('Search',
+                       render_kw={'class': 'btn btn-success btn-block'})
+
+
+class IngredientsForm(FlaskForm):
+    zip_code = StringField('Zip code', validators=[Length(min=6, max=6)])
+    ingredients_raw_str = TextAreaField('Ingredients')
+
+    submit = SubmitField('Filter by the food resources nearby')

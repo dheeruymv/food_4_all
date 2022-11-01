@@ -5,7 +5,7 @@
     <div class="media-body">
       <div class="article-metadata">
         <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
-        <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+        <small class="text-muted">{{ post.date_posted}}</small>
         {% if post.author == current_user %}
           <div>
             <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
@@ -13,8 +13,22 @@
           </div>
         {% endif %}
       </div>
-      <h2 class="article-title">{{ post.title }}</h2>
-      <p class="article-content">{{ post.content }}</p>
+      <h2 class="article-title">{{ post.name }}</h2>
+      <p class="article-content">{{ post.description }}</p>
+
+      <h3 class="article-title">Ingredient</h3>
+      {% for ingredient in post.ingredients_raw_str[1:-1].replace("'","").split(',') %}
+        <p class="article-content">{{ingredient}}</p>
+      {% endfor %}
+
+      <h3 class="article-title">Steps</h3>
+      {% for step in post.steps[1:-1].replace("'","").split('.') %}
+        {% if step.startswith(",") %}
+            <p class="article-content">{{step[1:]+'.'}}</p>
+        {% else %}
+            <p class="article-content">{{step+'.'}}</p>
+        {% endif %}
+      {% endfor %}
     </div>
   </article>
   <!-- Modal -->
